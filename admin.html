@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minnesota Community - Admin Database Portal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    @media print {
+      .print-layout {
+        font-family: Georgia, Cambria, "Times New Roman", Times, serif !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between">
+
+  <!-- SVG SEAL COMPONENT TEMPLATE -->
+  <template id="logo-template">
+    <svg class="h-16 w-16" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="48" stroke="#1b5e20" stroke-width="3" fill="#ffffff" />
+      <circle cx="50" cy="50" r="44" stroke="#fbc02d" stroke-width="1.5" />
+      <path d="M 12 50 L 14 52 L 12 54 L 10 52 Z" fill="#fbc02d" />
+      <path d="M 88 50 L 90 52 L 88 54 L 86 52 Z" fill="#fbc02d" />
+      <path id="textPathTop" d="M 16 50 A 34 34 0 0 1 84 50" fill="none" />
+      <text fill="#1b5e20" font-size="7" font-weight="bold" letter-spacing="0.8">
+        <textPath href="#textPathTop" startOffset="50%" text-anchor="middle">MINNESOTA COMMUNITY</textPath>
+      </text>
+      <path id="textPathBottom" d="M 84 50 A 34 34 0 0 1 16 50" fill="none" />
+      <text fill="#d32f2f" font-size="5.5" font-weight="bold" letter-spacing="0.5">
+        <textPath href="#textPathBottom" startOffset="50%" text-anchor="middle">ONE COMMUNITY • ONE VISION • ONE FUTURE</textPath>
+      </text>
+      <circle cx="50" cy="50" r="26" fill="#e8f5e9" stroke="#1b5e20" stroke-width="1" />
+      <circle cx="50" cy="40" r="7" fill="#fbc02d" />
+      <line x1="50" y1="30" x2="50" y2="33" stroke="#fbc02d" stroke-width="1" />
+      <line x1="50" y1="47" x2="50" y2="50" stroke="#fbc02d" stroke-width="1" />
+      <line x1="40" y1="40" x2="43" y2="40" stroke="#fbc02d" stroke-width="1" />
+      <line x1="57" y1="40" x2="60" y2="40" stroke="#fbc02d" stroke-width="1" />
+      <path d="M 38 52 C 38 45, 42 43, 44 43 C 42 45, 42 49, 41 52 Z" fill="#2e7d32" />
+      <path d="M 62 52 C 62 45, 58 43, 56 43 C 58 45, 58 49, 59 52 Z" fill="#2e7d32" />
+      <path d="M 40 54 Q 50 60 60 54" stroke="#1565c0" stroke-width="2" stroke-linecap="round" fill="none" />
+      <rect x="44" y="58" width="12" height="6" rx="1" fill="#c62828" />
+    </svg>
+  </template>
+
+  <!-- DASHBOARD NAV -->
+  <nav class="bg-white border-b border-slate-200 py-4 px-6 flex items-center justify-between sticky top-0 z-10 print:hidden">
+    <div class="flex items-center gap-3">
+      <div id="nav-logo" class="bg-emerald-550/10 p-1 rounded-full"></div>
+      <div>
+        <h1 class="text-md font-black tracking-tight text-slate-900">Minnesota Community Database</h1>
+        <p class="text-[10px] text-emerald-700 font-bold uppercase tracking-wider">Office Administration (Liberia)</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="/index.html" class="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors">
+        &larr; View Registration Form
+      </a>
+      <button onclick="fetchMembers()" class="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-850 transition-colors" title="Refresh Database">
+        <i data-lucide="refresh-cw" class="h-4.5 w-4.5"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- CORE DASHBOARD CONTENT -->
+  <div class="max-w-7xl mx-auto px-6 py-8 flex-1 w-full print:hidden" id="dashboard-main-content">
+    
+    <!-- STATS OVERVIEW -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+        <div class="h-12 w-12 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="users" class="h-6 w-6"></i>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 font-bold uppercase block tracking-wider">Submissions</span>
+          <span id="stat-total" class="text-2xl font-black text-slate-800 block mt-0.5">0</span>
+        </div>
+      </div>
+      <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+        <div class="h-12 w-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="clock" class="h-6 w-6"></i>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 font-bold uppercase block tracking-wider">Pending Review</span>
+          <span id="stat-pending" class="text-2xl font-black text-slate-800 block mt-0.5">0</span>
+        </div>
+      </div>
+      <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+        <div class="h-12 w-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="check-circle-2" class="h-6 w-6"></i>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 font-bold uppercase block tracking-wider">Approved Cards</span>
+          <span id="stat-approved" class="text-2xl font-black text-slate-800 block mt-0.5">0</span>
+        </div>
+      </div>
+      <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+        <div class="h-12 w-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="x-circle" class="h-6 w-6"></i>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 font-bold uppercase block tracking-wider">Declined</span>
+          <span id="stat-rejected" class="text-2xl font-black text-slate-800 block mt-0.5">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTERS AND SEARCH -->
+    <div class="bg-white border border-slate-150 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-4 shadow-sm mb-6">
+      <div class="relative flex-1 w-full">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+          <i data-lucide="search" class="h-4 w-4"></i>
+        </span>
+        <input type="text" id="search-input" placeholder="Search by name, phone, county, tracking ref..." class="pl-9 w-full rounded-xl border border-slate-200 py-2.5 px-3.5 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-500 text-slate-800">
+      </div>
+      <div class="flex gap-4 w-full md:w-auto">
+        <select id="status-filter" class="flex-1 md:flex-initial rounded-xl border border-slate-200 py-2.5 px-3 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 text-slate-700 font-bold bg-white">
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select id="gender-filter" class="flex-1 md:flex-initial rounded-xl border border-slate-200 py-2.5 px-3 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 text-slate-700 font-bold bg-white">
+          <option value="">All Genders</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- REGISTRATION DATA TABLE -->
+    <div class="bg-white border border-slate-150 rounded-2xl shadow-sm overflow-hidden" id="table-card">
+      <div id="table-loader" class="py-20 text-center text-slate-400">
+        <svg class="animate-spin h-8 w-8 mx-auto text-emerald-600 mb-3" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-sm font-semibold">Retrieving registrations...</p>
+      </div>
+      <div id="table-empty" class="hidden py-20 text-center text-slate-450 border border-dashed border-slate-200 m-6 rounded-xl">
+        <i data-lucide="users" class="h-10 w-10 mx-auto text-slate-300 mb-2"></i>
+        <p class="text-sm font-bold">No Registrations Located</p>
+        <p class="text-xs text-slate-400 mt-1">Refine your search parameters or check filters.</p>
+      </div>
+      <div id="table-wrapper" class="hidden overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-wider border-b border-slate-150">
+              <th class="py-4 px-6">Name / Ref</th>
+              <th class="py-4 px-6">Contact / Phone</th>
+              <th class="py-4 px-6">County of Origin</th>
+              <th class="py-4 px-6">Registered Date</th>
+              <th class="py-4 px-6 text-center">Status</th>
+              <th class="py-4 px-6 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="members-tbody" class="divide-y divide-slate-100 text-sm"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- REGISTRATION DETAILS MODAL -->
+  <div id="details-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto print:hidden animate-fadeIn">
+    <div class="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col my-8">
+      
+      <!-- Modal Header -->
+      <div class="bg-slate-900 text-white p-6 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <span class="text-[10px] uppercase font-bold text-emerald-400 tracking-wider block">Membership Review</span>
+          <h3 id="modal-title-name" class="text-xl font-extrabold tracking-tight mt-0.5">Applicant Name</h3>
+        </div>
+        <div class="flex gap-2">
+          <button id="modal-btn-print" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2 rounded-xl flex items-center gap-2 border border-slate-750 transition-colors cursor-pointer">
+            <i data-lucide="printer" class="h-4 w-4"></i> Print Form Layout
+          </button>
+          <button onclick="closeModal()" class="text-slate-400 hover:text-white p-2 text-sm font-bold">✕ Close</button>
+        </div>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 text-xs text-slate-750 font-semibold" id="modal-body-content"></div>
+
+      <!-- Modal Footer -->
+      <div class="bg-slate-50 border-t border-slate-100 px-6 py-4 flex items-center justify-between">
+        <span id="modal-footer-id" class="text-[10px] text-slate-400">ID: ...</span>
+        <button onclick="closeModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-extrabold text-xs px-5 py-2.5 rounded-xl transition-colors">Close Details</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PRINT-FRIENDLY POPULATED LAYOUT -->
+  <div id="print-layout-container" class="hidden min-h-screen bg-white p-4 md:p-12 print:p-0"></div>
+
+  <!-- ADMIN FOOTER -->
+  <footer class="bg-slate-900 text-slate-500 border-t border-slate-800 py-12 px-6 text-center text-xs print:hidden">
+    <div class="max-w-6xl mx-auto space-y-4">
+      <p class="font-bold text-slate-400 uppercase">MINNESOTA COMMUNITY &bull; OFFICE OF RECORDS &bull; BREWERVILLE CITY, LIBERIA</p>
+      <p>&ldquo;Unity, Peace, and Sustainable Development for All&rdquo;</p>
+      <p class="text-[10px] text-slate-650 pt-4">&copy; <span id="footer-year"></span> Minnesota Community. Powered by Serverless NodeJS & MongoDB.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("footer-year").innerText = new Date().getFullYear();
+
+    // Nav Logo Setup
+    const logoTemplate = document.getElementById("logo-template");
+    document.getElementById("nav-logo").appendChild(logoTemplate.content.cloneNode(true).querySelector("svg"));
+
+    // State Variables
+    let membersList = [];
+    let currentSelectedMember = null;
+    let isEditingOffice = false;
+
+    // Filters References
+    const searchInput = document.getElementById("search-input");
+    const statusFilter = document.getElementById("status-filter");
+    const genderFilter = document.getElementById("gender-filter");
+
+    // Event listeners for Filters
+    searchInput.addEventListener("input", debounce(fetchMembers, 350));
+    statusFilter.addEventListener("change", fetchMembers);
+    genderFilter.addEventListener("change", fetchMembers);
+
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    // Fetch Database Records
+    async function fetchMembers() {
+      const queryParams = new URLSearchParams({
+        search: searchInput.value.trim(),
+        status: statusFilter.value,
+        gender: genderFilter.value
+      });
+
+      document.getElementById("table-loader").classList.remove("hidden");
+      document.getElementById("table-wrapper").classList.add("hidden");
+      document.getElementById("table-empty").classList.add("hidden");
+
+      try {
+        const response = await fetch(`/api/members?${queryParams.toString()}`);
+        const result = await response.json();
+
+        if (!response.ok) throw new Error(result.error || "Failed to fetch registrations.");
+
+        membersList = result.data;
+        const stats = result.stats;
+
+        // Render Statistics
+        document.getElementById("stat-total").innerText = stats.total;
+        document.getElementById("stat-pending").innerText = stats.pending;
+        document.getElementById("stat-approved").innerText = stats.approved;
+        document.getElementById("stat-rejected").innerText = stats.rejected;
+
+        renderTable();
+      } catch (err) {
+        console.error(err);
+        alert("Error loading members: " + err.message);
+      } finally {
+        document.getElementById("table-loader").classList.add("hidden");
+      }
+    }
+
+    // Render Members Table
+    function renderTable() {
+      const tbody = document.getElementById("members-tbody");
+      tbody.innerHTML = "";
+
+      if (membersList.length === 0) {
+        document.getElementById("table-empty").classList.remove("hidden");
+        return;
+      }
+
+      membersList.forEach(member => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50/50 transition-colors border-b border-slate-100";
+        
+        const dateStr = new Date(member.dateOfRegistration).toLocaleDateString(undefined, {
+          year: "numeric", month: "short", day: "numeric"
+        });
+
+        let badgeStyle = "bg-amber-50 text-amber-700 border-amber-100";
+        if (member.status === "approved") badgeStyle = "bg-emerald-50 text-emerald-700 border-emerald-100";
+        if (member.status === "rejected") badgeStyle = "bg-red-50 text-red-700 border-red-100";
+
+        tr.innerHTML = `
+          <td class="py-4 px-6">
+            <div>
+              <span class="font-extrabold text-slate-800 block text-sm">${member.fullName}</span>
+              <span class="font-mono text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded mt-1 inline-block">${member.registrationNo || "Unassigned"}</span>
+            </div>
+          </td>
+          <td class="py-4 px-6">
+            <div class="space-y-0.5 text-xs">
+              <p class="font-bold text-slate-700">&bull; ${member.mobileNumber}</p>
+              ${member.emailAddress ? `<p class="text-slate-400 font-medium truncate max-w-xs">${member.emailAddress}</p>` : ""}
+            </div>
+          </td>
+          <td class="py-4 px-6">
+            <span class="font-bold text-slate-700 text-xs">${member.countyOfOrigin}</span>
+          </td>
+          <td class="py-4 px-6 text-xs text-slate-500 font-bold">${dateStr}</td>
+          <td class="py-4 px-6 text-center">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${badgeStyle}">
+              ${member.status}
+            </span>
+          </td>
+          <td class="py-4 px-6 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <button onclick="viewMemberDetails('${member._id}')" class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors font-bold text-xs flex items-center gap-1.5 cursor-pointer">
+                <i data-lucide="eye" class="h-4 w-4"></i> View Details
+              </button>
+              <button onclick="deleteMember('${member._id}')" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors cursor-pointer">
+                <i data-lucide="trash-2" class="h-4.5 w-4.5"></i>
+              </button>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("table-wrapper").classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    // View Member Details in Modal
+    async function viewMemberDetails(id) {
+      isEditingOffice = false;
+      try {
+        const response = await fetch(`/api/members?id=${id}`);
+        const result = await response.json();
+
+        if (!response.ok) throw new Error(result.error || "Failed to load member details.");
+
+        currentSelectedMember = result.data;
+
+        // Populate Modal Header
+        document.getElementById("modal-title-name").innerText = currentSelectedMember.fullName;
+        document.getElementById("modal-footer-id").innerText = "Database ID: " + currentSelectedMember._id;
+
+        // Build Printable Trigger Event
+        document.getElementById("modal-btn-print").onclick = function() {
+          renderPrintForm(currentSelectedMember);
+        };
+
+        // Render Modal Body Content
+        renderModalBody();
+
+        // Show Modal
+        document.getElementById("details-modal").classList.remove("hidden");
+        lucide.createIcons();
+      } catch (err) {
+        alert("Error loading applicant detail: " + err.message);
+      }
+    }
+
+    function renderModalBody() {
+      const container = document.getElementById("modal-body-content");
+      const m = currentSelectedMember;
+
+      const dobDate = new Date(m.dateOfBirth).toLocaleDateString();
+      const residencyText = m.durationOfResidency;
+      const registeredVoter = m.isRegisteredVoter ? "Yes (Voter)" : "No";
+      const participateText = m.willingToParticipate ? "Yes" : "No";
+
+      // Render Dependents table rows
+      let dependentsRows = "";
+      if (m.dependents && m.dependents.length > 0) {
+        dependentsRows = `
+          <div class="border border-slate-200 rounded-xl overflow-hidden shadow-inner max-w-2xl text-xs font-semibold">
+            <table class="w-full text-left">
+              <thead class="bg-slate-50 border-b border-slate-200">
+                <tr class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  <th class="py-2.5 px-4">Dependent Full Name</th>
+                  <th class="py-2.5 px-4 w-24">Age</th>
+                  <th class="py-2.5 px-4 w-36">Relationship</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${m.dependents.map(dep => `
+                  <tr class="hover:bg-slate-50/50">
+                    <td class="py-2.5 px-4 text-slate-800">${dep.name}</td>
+                    <td class="py-2.5 px-4 font-bold text-slate-700">${dep.age} Years</td>
+                    <td class="py-2.5 px-4 text-slate-600">${dep.relationship}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else {
+        dependentsRows = `<p class="text-xs text-slate-450 italic font-semibold">No dependents declared.</p>`;
+      }
+
+      // Render Interest Area Tags
+      const areaTags = m.areasOfInterest && m.areasOfInterest.length > 0 
+        ? m.areasOfInterest.map(area => `
+            <span class="bg-emerald-50 text-emerald-800 border border-emerald-100 rounded-full px-2.5 py-0.5 font-bold text-[10px] uppercase tracking-wider">
+              ${area === "Other" ? `Other: ${m.areasOfInterestOther || ""}` : area}
+            </span>
+          `).join(" ")
+        : `<span class="text-slate-400 text-[10px] italic">No areas specified.</span>`;
+
+      // Main inner HTML mapping Section A to G
+      container.innerHTML = `
+        <!-- Section A -->
+        <div>
+          <h4 class="font-extrabold text-slate-800 text-xs uppercase tracking-wider border-b border-slate-150 pb-2 mb-4">A. Personal Information</h4>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 text-xs">
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Gender</span><span class="text-slate-800 font-extrabold">${m.gender}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">DOB / Age</span><span class="text-slate-800 font-extrabold">${dobDate} (${m.age} Years)</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Marital Status</span><span class="text-slate-800 font-extrabold">${m.maritalStatus}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Nationality</span><span class="text-slate-800 font-extrabold">${m.nationality}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">County of Origin</span><span class="text-slate-800 font-extrabold">${m.countyOfOrigin}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Primary Mobile</span><span class="text-slate-850 font-extrabold">${m.mobileNumber}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Alternative Phone</span><span class="text-slate-800 font-extrabold">${m.alternativeNumber || "N/A"}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Email Address</span><span class="text-slate-800 font-extrabold truncate max-w-xs block">${m.emailAddress || "N/A"}</span></div>
+            <div class="col-span-2"><span class="text-slate-400 font-bold block text-[9px] mb-1">Home Address</span><span class="text-slate-800 font-bold leading-relaxed block">${m.homeAddress}</span></div>
+            <div class="col-span-2"><span class="text-slate-400 font-bold block text-[9px] mb-1">Landmark</span><span class="text-slate-800 font-bold leading-relaxed block">${m.houseNumberLandmark}</span></div>
+          </div>
+        </div>
+
+        <!-- Section B -->
+        <div>
+          <h4 class="font-extrabold text-slate-800 text-xs uppercase tracking-wider border-b border-slate-150 pb-2 mb-4">B. Employment / Livelihood Information</h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Livelihood</span><span class="text-slate-850 font-black">${m.livelihood === "Other" ? `Other: ${m.livelihoodOther}` : m.livelihood}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Employer/Business</span><span class="text-slate-850 font-black">${m.employerName || "N/A"}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Monthly Income (LD$)</span><span class="text-slate-850 font-black">${m.monthlyIncome}</span></div>
+          </div>
+        </div>
+
+        <!-- Section C -->
+        <div>
+          <h4 class="font-extrabold text-slate-800 text-xs uppercase tracking-wider border-b border-slate-150 pb-2 mb-4">C. Household Information</h4>
+          <div class="mb-4 flex gap-6">
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-center">
+              <span class="text-[9px] text-slate-450 block font-bold uppercase tracking-wider">Number of Dependents</span>
+              <span class="text-lg font-black text-slate-850">${m.numberOfDependents}</span>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-center">
+              <span class="text-[9px] text-slate-450 block font-bold uppercase tracking-wider">Total in Household</span>
+              <span class="text-lg font-black text-slate-850">${m.totalPersonsInHousehold}</span>
+            </div>
+          </div>
+          ${dependentsRows}
+        </div>
+
+        <!-- Section D -->
+        <div>
+          <h4 class="font-extrabold text-slate-800 text-xs uppercase tracking-wider border-b border-slate-150 pb-2 mb-4">D. Community Information</h4>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Time Lived in Minnesota</span><span class="text-slate-850 font-black">${residencyText}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Residential Status</span><span class="text-slate-850 font-black">${m.residentialStatus}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Registered Voter?</span><span class="text-slate-850 font-black">${registeredVoter}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Willing to Participate?</span><span class="text-slate-850 font-black">${participateText}</span></div>
+            <div class="col-span-2 md:col-span-4"><span class="text-slate-400 font-bold block text-[9px] mb-1 font-sans">Areas of Interest in Development</span><div class="flex flex-wrap gap-2 mt-2">${areaTags}</div></div>
+          </div>
+        </div>
+
+        <!-- Section E -->
+        <div>
+          <h4 class="font-extrabold text-slate-800 text-xs uppercase tracking-wider border-b border-slate-150 pb-2 mb-4">E. Emergency Contact Information</h4>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Contact Name</span><span class="text-slate-850 font-black">${m.emergencyName}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Relationship</span><span class="text-slate-850 font-bold">${m.emergencyRelationship}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Phone Number</span><span class="text-slate-850 font-black">${m.emergencyPhone}</span></div>
+            <div><span class="text-slate-400 font-bold block text-[9px] mb-1">Address</span><span class="text-slate-850 font-bold">${m.emergencyAddress}</span></div>
+          </div>
+        </div>
+
+        <!-- Section G: OFFICE ACTION DECISION PANEL -->
+        <div class="border-t-2 border-dashed border-slate-200 pt-8" id="office-decision-block"></div>
+      `;
+
+      renderOfficeDecisionBlock();
+    }
+
+    function renderOfficeDecisionBlock() {
+      const block = document.getElementById("office-decision-block");
+      const m = currentSelectedMember;
+
+      if (isEditingOffice) {
+        const dateFormatted = m.officeDateReceived 
+          ? new Date(m.officeDateReceived).toISOString().split("T")[0] 
+          : new Date().toISOString().split("T")[0];
+
+        block.innerHTML = `
+          <div class="bg-slate-900 text-white rounded-2xl p-6 md:p-8">
+            <h4 class="font-extrabold tracking-tight text-md text-emerald-400 mb-6">Edit G. Community Office Decision Use Only</h4>
+            <form id="office-form" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-xs text-slate-300">
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Decision Status</label>
+                <select name="status" class="w-full rounded-xl bg-slate-800 border border-slate-700 text-white font-bold p-3 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                  <option value="pending" ${m.status === "pending" ? "selected" : ""}>Review (Pending)</option>
+                  <option value="approved" ${m.status === "approved" ? "selected" : ""}>Approved Member</option>
+                  <option value="rejected" ${m.status === "rejected" ? "selected" : ""}>Declined / Rejected</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Membership ID Number</label>
+                <input type="text" name="registrationNo" value="${m.registrationNo || ""}" placeholder="e.g. MC-MEM-2026-104" class="w-full rounded-xl bg-slate-800 border border-slate-700 text-white font-bold p-3 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                <span class="text-[9px] text-slate-500 block mt-1.5 font-semibold">Setting status to Approved will automatically suggest a reference if left blank.</span>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Date Received/Processed</label>
+                <input type="date" name="officeDateReceived" value="${dateFormatted}" class="w-full rounded-xl bg-slate-800 border border-slate-700 text-white font-bold p-3 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Application Received By Name</label>
+                <input type="text" name="officeReceivedBy" value="${m.officeReceivedBy || ""}" placeholder="Full Name" class="w-full rounded-xl bg-slate-800 border border-slate-700 text-white font-bold p-3 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Received By Position</label>
+                <input type="text" name="officePositionReceivedBy" value="${m.officePositionReceivedBy || "Registrar"}" class="w-full rounded-xl bg-slate-800 border border-slate-700 text-white font-bold p-3 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Authorized Approved By Name</label>
+                <input type="text" name="officeApprovedBy" value="${m.officeApprovedBy || ""}" placeholder="Full Name" class="w-full rounded-xl bg-slate-800 border border-slate-700 text-white font-bold p-3 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Approved By Position</label>
+                <input type="text" name="officePositionApprovedBy" value="${m.officePositionApprovedBy || "Community Chairman"}" class="w-full rounded-xl bg-slate-800 border border-slate-700 text-white font-bold p-3 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Remarks & Decisions Comments</label>
+                <input type="text" name="officeRemarks" value="${m.officeRemarks || ""}" placeholder="e.g. Verified resident. Cleared for print." class="w-full rounded-xl bg-slate-800 border border-slate-700 text-white font-bold p-3 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+              </div>
+              <div class="sm:col-span-3 flex justify-end gap-3 pt-4 border-t border-slate-800">
+                <button type="button" onclick="toggleEditOffice(false)" class="bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold px-5 py-2.5 rounded-xl transition-colors cursor-pointer">Cancel</button>
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-6 py-2.5 rounded-xl flex items-center gap-1.5 transition-colors shadow-lg cursor-pointer">
+                  <i data-lucide="save" class="h-4 w-4"></i> Save Office Decision
+                </button>
+              </div>
+            </form>
+          </div>
+        `;
+
+        const oForm = document.getElementById("office-form");
+        oForm.addEventListener("submit", saveOfficeDecision);
+      } else {
+        let statusColor = "text-amber-400";
+        if (m.status === "approved") statusColor = "text-emerald-400";
+        if (m.status === "rejected") statusColor = "text-red-400";
+
+        block.innerHTML = `
+          <div class="bg-slate-900 text-white rounded-2xl p-6 md:p-8">
+            <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+              <div class="flex items-center gap-3">
+                <div class="bg-emerald-500 text-white p-1.5 rounded-lg">
+                  <i data-lucide="landmark" class="h-5 w-5"></i>
+                </div>
+                <div>
+                  <h4 class="font-extrabold tracking-tight text-md">G. Community Office Use Only</h4>
+                  <p class="text-[10px] text-slate-450 font-medium">Log approval decisions, comments, and assign official card IDs.</p>
+                </div>
+              </div>
+              <button onclick="toggleEditOffice(true)" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer shadow-lg">
+                <i data-lucide="edit-3" class="h-4 w-4"></i> Edit Office Decision
+              </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-xs text-slate-300 mt-2">
+              <div>
+                <span class="text-[9px] uppercase tracking-wider text-slate-450 block mb-1">Decision Status</span>
+                <span class="font-black text-sm uppercase tracking-wide flex items-center gap-1.5 ${statusColor}">
+                  ${m.status}
+                </span>
+              </div>
+              <div>
+                <span class="text-[9px] uppercase tracking-wider text-slate-450 block mb-1">Official Member ID</span>
+                <span class="text-white font-extrabold text-sm">${m.registrationNo || "Unassigned"}</span>
+              </div>
+              <div>
+                <span class="text-[9px] uppercase tracking-wider text-slate-450 block mb-1">Received By Name</span>
+                <span class="text-white block">${m.officeReceivedBy || "Pending..."}</span>
+                ${m.officePositionReceivedBy ? `<span class="text-[10px] text-slate-450 block mt-0.5">${m.officePositionReceivedBy}</span>` : ""}
+              </div>
+              <div>
+                <span class="text-[9px] uppercase tracking-wider text-slate-450 block mb-1">Approved By Name</span>
+                <span class="text-white block">${m.officeApprovedBy || "Pending..."}</span>
+                ${m.officePositionApprovedBy ? `<span class="text-[10px] text-slate-450 block mt-0.5">${m.officePositionApprovedBy}</span>` : ""}
+              </div>
+              ${m.officeDateReceived ? `
+                <div>
+                  <span class="text-[9px] uppercase tracking-wider text-slate-450 block mb-1">Date Received / Action</span>
+                  <span class="text-white font-semibold">${new Date(m.officeDateReceived).toLocaleDateString()}</span>
+                </div>
+              ` : ""}
+              ${m.officeRemarks ? `
+                <div class="col-span-1 sm:col-span-2 md:col-span-3">
+                  <span class="text-[9px] uppercase tracking-wider text-slate-450 block mb-1">Office Remarks / Comments</span>
+                  <p class="text-white italic bg-slate-850 p-2.5 rounded-lg border border-slate-750 leading-relaxed font-semibold">&ldquo;${m.officeRemarks}&rdquo;</p>
+                </div>
+              ` : ""}
+            </div>
+          </div>
+        `;
+      }
+      lucide.createIcons();
+    }
+
+    function toggleEditOffice(edit) {
+      isEditingOffice = edit;
+      renderOfficeDecisionBlock();
+    }
+
+    // Save Updated Office Vetting Info
+    async function saveOfficeDecision(e) {
+      e.preventDefault();
+      const rawForm = new FormData(e.target);
+      const status = rawForm.get("status");
+      let registrationNo = rawForm.get("registrationNo");
+
+      // Suggest unique membership reference on approval if unassigned
+      if (status === "approved" && (!registrationNo || registrationNo.startsWith("MC-2026-"))) {
+        const serial = Math.floor(1000 + Math.random() * 9000);
+        registrationNo = `MC-MEM-2026-${serial}`;
+      }
+
+      const payload = {
+        status,
+        registrationNo,
+        officeDateReceived: rawForm.get("officeDateReceived") ? new Date(rawForm.get("officeDateReceived")) : new Date(),
+        officeReceivedBy: rawForm.get("officeReceivedBy"),
+        officePositionReceivedBy: rawForm.get("officePositionReceivedBy"),
+        officeApprovedBy: rawForm.get("officeApprovedBy"),
+        officePositionApprovedBy: rawForm.get("officePositionApprovedBy"),
+        officeRemarks: rawForm.get("officeRemarks")
+      };
+
+      try {
+        const response = await fetch(`/api/members?id=${currentSelectedMember._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (!response.ok) throw new Error(result.error || "Failed to save office records.");
+
+        currentSelectedMember = result.data;
+        isEditingOffice = false;
+        renderModalBody();
+        fetchMembers();
+        alert("Office record and vetting status successfully updated.");
+      } catch (err) {
+        alert("Error saving: " + err.message);
+      }
+    }
+
+    // Delete Registration Form Record
+    async function deleteMember(id) {
+      if (!confirm("Are you absolutely sure you want to delete this registration? This will permanently erase it from the database.")) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/members?id=${id}`, { method: "DELETE" });
+        const result = await response.json();
+
+        if (!response.ok) throw new Error(result.error || "Deletion failed.");
+
+        alert("Registration successfully deleted.");
+        closeModal();
+        fetchMembers();
+      } catch (err) {
+        alert("Error deleting record: " + err.message);
+      }
+    }
+
+    function closeModal() {
+      document.getElementById("details-modal").classList.add("hidden");
+      currentSelectedMember = null;
+    }
+
+    // PRINT FORM LAYOUT REPLICATOR
+    function renderPrintForm(m) {
+      const container = document.getElementById("print-layout-container");
+      
+      const dobStr = new Date(m.dateOfBirth).toLocaleDateString();
+      const regDateStr = new Date(m.dateOfRegistration || m.createdAt).toLocaleDateString();
+      const actionDateStr = m.officeDateReceived ? new Date(m.officeDateReceived).toLocaleDateString() : "_____/_____/__________";
+
+      const genderMale = m.gender === "Male" ? "✔" : "&nbsp;";
+      const genderFemale = m.gender === "Female" ? "✔" : "&nbsp;";
+
+      const maritalSingle = m.maritalStatus === "Single" ? "✔" : "&nbsp;";
+      const maritalMarried = m.maritalStatus === "Married" ? "✔" : "&nbsp;";
+      const maritalDivorced = m.maritalStatus === "Divorced" ? "✔" : "&nbsp;";
+      const maritalSeparated = m.maritalStatus === "Separated" ? "✔" : "&nbsp;";
+      const maritalWidowed = m.maritalStatus === "Widowed" ? "✔" : "&nbsp;";
+
+      const voterYes = m.isRegisteredVoter ? "✔" : "&nbsp;";
+      const voterNo = !m.isRegisteredVoter ? "✔" : "&nbsp;";
+
+      const participateYes = m.willingToParticipate ? "✔" : "&nbsp;";
+      const participateNo = !m.willingToParticipate ? "✔" : "&nbsp;";
+
+      // Areas checklist
+      const areas = ["Security", "Health & Sanitation", "Education", "Youth Development", "Women's Affairs", "Sports & Recreation", "Infrastructure Development", "Environment", "Community Mediation"];
+      const checkedAreasHTML = areas.map(a => {
+        const isChecked = m.areasOfInterest?.includes(a) ? "✔" : "&nbsp;";
+        return `<div class="w-1/3 py-0.5">[&thinsp;${isChecked}&thinsp;] ${a}</div>`;
+      }).join("");
+
+      const isOtherChecked = m.areasOfInterest?.includes("Other") ? "✔" : "&nbsp;";
+      const otherValue = m.areasOfInterest?.includes("Other") ? m.areasOfInterestOther : "_________________";
+
+      // Livelihoods checklist
+      const livelihoods = ["Government Employee", "Private Employee", "Business Owner", "Petty Trader", "Farmer", "Fisherman/Fisherwoman", "Driver/Rider", "Teacher", "Health Worker", "Student", "Unemployed"];
+      const livelihoodsHTML = livelihoods.map(l => {
+        const isChecked = m.livelihood === l ? "✔" : "&nbsp;";
+        return `<div class="w-1/3 py-0.5">[&thinsp;${isChecked}&thinsp;] ${l}</div>`;
+      }).join("");
+
+      const isLivelihoodOther = m.livelihood === "Other" ? "✔" : "&nbsp;";
+      const livelihoodOtherValue = m.livelihood === "Other" ? m.livelihoodOther : "_________________";
+
+      // Income checkboxes
+      const incomeTiers = ["Less than LD$10,000", "LD$10,000 - LD$25,000", "LD$25,001 - LD$50,000", "Above LD$50,000"];
+      const incomeTiersHTML = incomeTiers.map(t => {
+        const isChecked = m.monthlyIncome === t ? "✔" : "&nbsp;";
+        return `<div class="w-1/4 py-0.5">[&thinsp;${isChecked}&thinsp;] ${t}</div>`;
+      }).join("");
+
+      // Residency checklist
+      const durations = ["Less than 1 Year", "1-5 Years", "6-10 Years", "More than 10 Years"];
+      const durationsHTML = durations.map(d => {
+        const isChecked = m.durationOfResidency === d ? "✔" : "&nbsp;";
+        return `<span class="mr-4">[&thinsp;${isChecked}&thinsp;] ${d}</span>`;
+      }).join("");
+
+      // Residential statuses checklist
+      const statuses = ["Property Owner", "Tenant", "Relative/Dependent", "Caretaker"];
+      const statusesHTML = statuses.map(s => {
+        const isChecked = m.residentialStatus === s ? "✔" : "&nbsp;";
+        return `<span class="mr-4">[&thinsp;${isChecked}&thinsp;] ${s}</span>`;
+      }).join("");
+
+      // Dependents List Row Mimic
+      let dependentsRows = "";
+      for (let i = 0; i < Math.max(3, m.dependents?.length || 0); i++) {
+        const dep = m.dependents?.[i];
+        dependentsRows += `
+          <tr class="border-b border-slate-600 h-7 text-xs font-bold font-sans">
+            <td class="p-1 border-r border-slate-600 text-center">${i + 1}</td>
+            <td class="p-1 border-r border-slate-600 px-3">${dep ? dep.name : ""}</td>
+            <td class="p-1 border-r border-slate-600 px-3 text-center">${dep ? dep.age : ""}</td>
+            <td class="p-1 px-3">${dep ? dep.relationship : ""}</td>
+          </tr>
+        `;
+      }
+
+      container.innerHTML = `
+        <!-- Print Header Controls -->
+        <div class="max-w-4xl mx-auto mb-6 bg-slate-900 text-white p-4 rounded-xl flex items-center justify-between shadow-lg print:hidden">
+          <button onclick="closePrintView()" class="bg-slate-800 hover:bg-slate-750 text-white font-bold text-xs px-4 py-2.5 rounded-xl border border-slate-700 transition-colors cursor-pointer flex items-center gap-1.5">
+            &larr; Back to Admin Details
+          </button>
+          <span class="text-xs text-slate-300 font-semibold">Ensure "Background graphics" is enabled in browser print settings.</span>
+          <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-md transition-colors cursor-pointer flex items-center gap-1.5">
+            <i data-lucide="printer" class="h-4 w-4"></i> Print / Save as PDF
+          </button>
+        </div>
+
+        <!-- REPLICATED FORM SHEET -->
+        <div class="print-layout max-w-[800px] mx-auto border-2 border-double border-slate-800 p-8 bg-white text-slate-950 text-xs shadow-xl print:shadow-none print:border-none print:p-0 leading-relaxed font-serif">
+          
+          <!-- Seal & Headers -->
+          <div class="flex items-center justify-between border-b-2 border-slate-950 pb-4 mb-4">
+            <div id="print-seal-left"></div>
+            <div class="text-center font-sans">
+              <h1 class="text-md font-extrabold uppercase tracking-wide">Minnesota Community</h1>
+              <h2 class="text-xl font-black mt-0.5">MEMBERSHIP REGISTRATION FORM</h2>
+              <p class="text-[9px] font-bold text-slate-750 mt-0.5 tracking-wide">BREWERVILLE CITY, MONTSERRADO COUNTY &bull; REPUBLIC OF LIBERIA</p>
+            </div>
+            <div id="print-seal-right"></div>
+          </div>
+
+          <!-- Ref & Registration Date -->
+          <div class="flex justify-end gap-6 mb-5 font-sans text-[10px] font-bold pb-2 border-b border-slate-300">
+            <div>Membership Registration No.: <span class="border-b border-slate-800 px-4 py-0.5 font-mono text-xs">${m.registrationNo || "Unassigned"}</span></div>
+            <div>Date of Registration: <span class="border-b border-slate-800 px-4 py-0.5">${regDateStr}</span></div>
+          </div>
+
+          <!-- Section A -->
+          <div class="space-y-2 mb-5">
+            <h3 class="font-sans font-bold border-b border-slate-800 text-[10px] tracking-wider uppercase text-slate-900">A. PERSONAL INFORMATION</h3>
+            <div class="grid grid-cols-3 gap-y-2.5 gap-x-4">
+              <div class="col-span-3">1. Full Name: <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold text-slate-900">${m.fullName}</span></div>
+              <div>2. Gender: <span class="font-bold">[&thinsp;${genderMale}&thinsp;] Male &nbsp;&nbsp; [&thinsp;${genderFemale}&thinsp;] Female</span></div>
+              <div>3. Date of Birth: <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${dobStr}</span></div>
+              <div>4. Age: <span class="border-b border-dotted border-slate-800 pb-0.5 px-3 font-bold">${m.age}</span> Years</div>
+              <div class="col-span-3">5. Marital Status: <span class="font-bold">
+                [&thinsp;${maritalSingle}&thinsp;] Single &nbsp;&nbsp;
+                [&thinsp;${maritalMarried}&thinsp;] Married &nbsp;&nbsp;
+                [&thinsp;${maritalDivorced}&thinsp;] Divorced &nbsp;&nbsp;
+                [&thinsp;${maritalSeparated}&thinsp;] Separated &nbsp;&nbsp;
+                [&thinsp;${maritalWidowed}&thinsp;] Widowed
+              </span></div>
+              <div>6. Nationality: <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${m.nationality}</span></div>
+              <div class="col-span-2">7. County of Origin: <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${m.countyOfOrigin}</span></div>
+              <div class="col-span-3">8. Home Address: <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${m.homeAddress}</span></div>
+              <div class="col-span-3">9. House Number/Landmark: <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${m.houseNumberLandmark}</span></div>
+              <div>10. Mobile Number: <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${m.mobileNumber}</span></div>
+              <div>11. Alternative Number: <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${m.alternativeNumber || "N/A"}</span></div>
+              <div>12. Email Address (if any): <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${m.emailAddress || "N/A"}</span></div>
+            </div>
+          </div>
+
+          <!-- Section B -->
+          <div class="space-y-2 mb-5">
+            <h3 class="font-sans font-bold border-b border-slate-800 text-[10px] tracking-wider uppercase text-slate-900">B. EMPLOYMENT / LIVELIHOOD INFORMATION</h3>
+            <div class="space-y-1">
+              <div>13. What do you do for a living?</div>
+              <div class="flex flex-wrap text-[10px] font-bold font-sans">${livelihoodsHTML} <div class="w-1/3">[&thinsp;${isLivelihoodOther}&thinsp;] Other: <span class="border-b border-dotted border-slate-800 px-1 font-serif text-xs">${livelihoodOtherValue}</span></div></div>
+              <div class="pt-1.5">14. Name of Employer/Business (if applicable): <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${m.employerName || "_______________________"}</span></div>
+              <div class="flex flex-wrap text-[10px] font-bold font-sans pt-1">${incomeTiersHTML}</div>
+            </div>
+          </div>
+
+          <!-- Section C -->
+          <div class="space-y-2 mb-5">
+            <h3 class="font-sans font-bold border-b border-slate-800 text-[10px] tracking-wider uppercase text-slate-900">C. HOUSEHOLD INFORMATION</h3>
+            <div>15. Number of Dependents: <span class="border-b border-dotted border-slate-800 pb-0.5 px-4 font-bold">${m.numberOfDependents}</span></div>
+            <div class="pt-1">
+              <span class="block mb-1">16. Names and Ages of Dependents (if any):</span>
+              <table class="w-full border border-slate-600 font-sans text-xs text-left">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-600 font-bold">
+                    <th class="p-1 border-r border-slate-600 text-center w-12">No.</th>
+                    <th class="p-1 border-r border-slate-600">Name</th>
+                    <th class="p-1 border-r border-slate-600 w-24">Age</th>
+                    <th class="p-1">Relationship</th>
+                  </tr>
+                </thead>
+                <tbody>${dependentsRows}</tbody>
+              </table>
+            </div>
+            <div class="pt-1">17. Total Number of Persons Living in Household: <span class="border-b border-dotted border-slate-800 pb-0.5 px-4 font-bold">${m.totalPersonsInHousehold}</span></div>
+          </div>
+
+          <!-- Section D -->
+          <div class="space-y-2 mb-5">
+            <h3 class="font-sans font-bold border-b border-slate-800 text-[10px] tracking-wider uppercase text-slate-900">D. COMMUNITY INFORMATION</h3>
+            <div class="space-y-1.5">
+              <div>18. How Long Have You Lived in Minnesota Community? <span class="pl-2 font-bold font-sans text-[10px]">${durationsHTML}</span></div>
+              <div>19. Residential Status: <span class="pl-2 font-bold font-sans text-[10px]">${statusesHTML}</span></div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>20. Are You a Registered Voter? <span class="font-bold font-sans text-[10px] pl-2">[&thinsp;${voterYes}&thinsp;] Yes &nbsp;&nbsp;&nbsp; [&thinsp;${voterNo}&thinsp;] No</span></div>
+                <div>21. Are You Willing to Participate in Community Activities? <span class="font-bold font-sans text-[10px] pl-2">[&thinsp;${participateYes}&thinsp;] Yes &nbsp;&nbsp;&nbsp; [&thinsp;${participateNo}&thinsp;] No</span></div>
+              </div>
+              <div>22. Areas of Interest in Community Development:</div>
+              <div class="flex flex-wrap text-[10px] font-bold font-sans">${checkedAreasHTML} <div class="w-1/3">[&thinsp;${isOtherChecked}&thinsp;] Other: <span class="border-b border-dotted border-slate-800 px-1 font-serif text-xs">${otherValue}</span></div></div>
+            </div>
+          </div>
+
+          <!-- Section E -->
+          <div class="space-y-2 mb-5">
+            <h3 class="font-sans font-bold border-b border-slate-800 text-[10px] tracking-wider uppercase text-slate-900">E. EMERGENCY CONTACT INFORMATION</h3>
+            <div class="grid grid-cols-2 gap-y-2 gap-x-4">
+              <div class="col-span-2">Name: <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${m.emergencyName}</span> &nbsp;&nbsp;&nbsp; Relationship: <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${m.emergencyRelationship}</span></div>
+              <div>Phone Number: <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${m.emergencyPhone}</span></div>
+              <div>Address: <span class="border-b border-dotted border-slate-800 pb-0.5 px-2 font-bold">${m.emergencyAddress}</span></div>
+            </div>
+          </div>
+
+          <!-- Section F -->
+          <div class="space-y-2 mb-5">
+            <h3 class="font-sans font-bold border-b border-slate-800 text-[10px] tracking-wider uppercase text-slate-900">F. MEMBER&apos;S DECLARATION</h3>
+            <p class="italic text-[10px] leading-normal font-sans text-slate-800">
+              I hereby certify that the information provided above is true and correct to the best of my knowledge. I agree to abide by the Constitution, By-Laws, rules, and regulations of Minnesota Community and to support activities aimed at promoting peace, unity, development, and good governance.
+            </p>
+            <div class="flex justify-between items-end pt-2">
+              <div>Applicant&apos;s Signature/Thumb Print: <span class="border-b border-slate-850 font-bold px-3 font-sans italic text-emerald-900 text-xs font-black">${m.fullName} (DIGITAL ACCEPT)</span></div>
+              <div>Date: <span class="border-b border-slate-850 font-bold px-4">${new Date(m.declarationDate || m.createdAt).toLocaleDateString()}</span></div>
+            </div>
+          </div>
+
+          <!-- Section G -->
+          <div class="border border-slate-800 p-5 rounded-lg space-y-4">
+            <h3 class="font-bold font-sans text-center text-xs uppercase tracking-tight text-slate-900">G. COMMUNITY OFFICE USE ONLY</h3>
+            <div class="grid grid-cols-2 gap-y-3 gap-x-6 text-[10px] font-sans">
+              <div class="col-span-2">
+                Application Received By: <span class="border-b border-slate-800 font-bold px-2 py-0.5">${m.officeReceivedBy || "_____________________________________"}</span>
+                <span class="pl-4">Position: <span class="border-b border-slate-800 font-bold px-2 py-0.5">${m.officePositionReceivedBy || "Registrar"}</span>
+              </div>
+              <div class="col-span-2">Date Received: <span class="border-b border-slate-800 font-bold px-2 py-0.5">${actionDateStr}</span></div>
+              <div class="col-span-2">
+                Approved By: <span class="border-b border-slate-800 font-bold px-2 py-0.5">${m.officeApprovedBy || "_____________________________________"}</span>
+                <span class="pl-4">Position: <span class="border-b border-slate-800 font-bold px-2 py-0.5">${m.officePositionApprovedBy || "Chairman"}</span>
+              </div>
+              <div class="col-span-2 flex items-center justify-between pt-1">
+                <div>Membership Number: <span class="border-b border-slate-800 font-black px-3 py-0.5 text-xs text-emerald-800 font-mono">${m.registrationNo || "____________________"}</span></div>
+                <div class="border border-slate-800 rounded-full h-16 w-16 flex items-center justify-center text-center text-[9px] leading-tight font-bold uppercase tracking-wider select-none bg-slate-50 border-double opacity-75 shadow-sm mr-4">Official Stamp</div>
+              </div>
+              <div class="col-span-2">Remarks: <span class="border-b border-slate-800 font-bold px-2 py-0.5 block min-h-[30px] italic">${m.officeRemarks || "No administrative remarks logged."}</span></div>
+            </div>
+          </div>
+
+          <!-- Motto -->
+          <div class="text-center font-sans mt-6 text-[10px] font-bold text-slate-600 border-t border-slate-200 pt-3">
+            Motto:
+            <p class="text-xs italic text-slate-900 tracking-wide mt-0.5">&ldquo;Unity, Peace, and Sustainable Development for All&rdquo;</p>
+          </div>
+
+        </div>
+      `;
+
+      // Draw SVG seals
+      const leftSeal = document.getElementById("print-seal-left");
+      const rightSeal = document.getElementById("print-seal-right");
+      leftSeal.appendChild(logoTemplate.content.cloneNode(true).querySelector("svg"));
+      rightSeal.appendChild(logoTemplate.content.cloneNode(true).querySelector("svg"));
+
+      // Toggle views
+      document.getElementById("dashboard-main-content").classList.add("hidden");
+      document.getElementById("details-modal").classList.add("hidden");
+      document.querySelector("nav").classList.add("hidden");
+      document.querySelector("footer").classList.add("hidden");
+      document.getElementById("print-layout-container").classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function closePrintView() {
+      document.getElementById("dashboard-main-content").classList.remove("hidden");
+      document.getElementById("details-modal").classList.remove("hidden");
+      document.querySelector("nav").classList.remove("hidden");
+      document.querySelector("footer").classList.remove("hidden");
+      document.getElementById("print-layout-container").classList.add("hidden");
+    }
+
+    // Initial Load
+    fetchMembers();
+  </script>
+</body>
+</html>

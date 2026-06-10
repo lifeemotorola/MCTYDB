@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minnesota Community Membership Registration Portal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between">
+
+  <!-- SVG COMMUNITY LOGO COMPONENT TEMPLATE -->
+  <template id="logo-template">
+    <svg class="h-16 w-16" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="48" stroke="#1b5e20" stroke-width="3" fill="#ffffff" />
+      <circle cx="50" cy="50" r="44" stroke="#fbc02d" stroke-width="1.5" />
+      <path d="M 12 50 L 14 52 L 12 54 L 10 52 Z" fill="#fbc02d" />
+      <path d="M 88 50 L 90 52 L 88 54 L 86 52 Z" fill="#fbc02d" />
+      <path id="textPathTop" d="M 16 50 A 34 34 0 0 1 84 50" fill="none" />
+      <text fill="#1b5e20" font-size="7" font-weight="bold" letter-spacing="0.8">
+        <textPath href="#textPathTop" startOffset="50%" text-anchor="middle">MINNESOTA COMMUNITY</textPath>
+      </text>
+      <path id="textPathBottom" d="M 84 50 A 34 34 0 0 1 16 50" fill="none" />
+      <text fill="#d32f2f" font-size="5.5" font-weight="bold" letter-spacing="0.5">
+        <textPath href="#textPathBottom" startOffset="50%" text-anchor="middle">ONE COMMUNITY • ONE VISION • ONE FUTURE</textPath>
+      </text>
+      <circle cx="50" cy="50" r="26" fill="#e8f5e9" stroke="#1b5e20" stroke-width="1" />
+      <circle cx="50" cy="40" r="7" fill="#fbc02d" />
+      <line x1="50" y1="30" x2="50" y2="33" stroke="#fbc02d" stroke-width="1" />
+      <line x1="50" y1="47" x2="50" y2="50" stroke="#fbc02d" stroke-width="1" />
+      <line x1="40" y1="40" x2="43" y2="40" stroke="#fbc02d" stroke-width="1" />
+      <line x1="57" y1="40" x2="60" y2="40" stroke="#fbc02d" stroke-width="1" />
+      <path d="M 38 52 C 38 45, 42 43, 44 43 C 42 45, 42 49, 41 52 Z" fill="#2e7d32" />
+      <path d="M 62 52 C 62 45, 58 43, 56 43 C 58 45, 58 49, 59 52 Z" fill="#2e7d32" />
+      <path d="M 40 54 Q 50 60 60 54" stroke="#1565c0" stroke-width="2" stroke-linecap="round" fill="none" />
+      <rect x="44" y="58" width="12" height="6" rx="1" fill="#c62828" />
+      <line x1="46" y1="61" x2="54" y2="61" stroke="#ffffff" stroke-width="1" />
+    </svg>
+  </template>
+
+  <!-- OFFICIAL DUAL-LOGO HEADER -->
+  <header class="w-full bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-950 text-white py-8 px-4 border-b-4 border-yellow-500 shadow-md">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      <div id="header-logo-left" class="bg-white p-1 rounded-full shadow-lg"></div>
+      <div class="text-center flex-1">
+        <h2 class="text-yellow-400 font-extrabold text-xs tracking-widest uppercase">Republic of Liberia</h2>
+        <h1 class="text-2xl md:text-4xl font-black tracking-tight mt-1">MINNESOTA COMMUNITY</h1>
+        <p class="text-yellow-300 font-bold text-md md:text-lg tracking-wide uppercase mt-1">Membership Registration Form</p>
+        <div class="text-xs text-emerald-100 mt-2 font-medium">Brewerville City, Montserrado County</div>
+        <div class="inline-block mt-3 bg-yellow-400 text-emerald-950 font-bold px-4 py-1 rounded-full text-xs shadow-inner uppercase tracking-wider">
+          Motto: &ldquo;Unity, Peace, and Sustainable Development for All&rdquo;
+        </div>
+      </div>
+      <div id="header-logo-right" class="bg-white p-1 rounded-full shadow-lg"></div>
+    </div>
+  </header>
+
+  <!-- MAIN BODY CONTAINER -->
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full">
+
+    <!-- WELCOME TEXT -->
+    <div class="text-center max-w-2xl mx-auto mb-8">
+      <h2 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Community Membership Registry</h2>
+      <p class="mt-3 text-slate-600 text-sm leading-relaxed">
+        Welcome to the official digital portal for the <strong>Minnesota Community</strong>. Please register your details below to obtain your community membership card and participate in local development.
+      </p>
+    </div>
+
+    <!-- STATUS TRACKER WIDGET -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden max-w-xl mx-auto my-8">
+      <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 text-white text-center">
+        <h3 class="font-bold text-lg tracking-tight">Already Registered? Track Your Status</h3>
+        <p class="text-slate-300 text-xs mt-1">Enter your Tracking Reference (e.g. MC-2026-XXXX) or Mobile Number.</p>
+      </div>
+      <div class="p-6">
+        <form id="status-checker-form" class="flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-grow">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+              <i data-lucide="search" class="h-5 w-5"></i>
+            </span>
+            <input type="text" id="status-query" placeholder="e.g. MC-2026-1048 or 0777XXXXXX" class="pl-10 w-full rounded-xl border border-slate-200 py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-semibold" required>
+          </div>
+          <button type="submit" id="status-submit-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl px-6 py-3 text-sm transition-colors flex items-center justify-center gap-2">
+            <span>Check Status</span>
+          </button>
+        </form>
+
+        <!-- Status results container -->
+        <div id="status-result" class="hidden mt-6 border-t border-slate-100 pt-6"></div>
+      </div>
+    </div>
+
+    <!-- SUCCESS BOX -->
+    <div id="success-box" class="hidden bg-white rounded-2xl shadow-xl border border-slate-100 p-8 max-w-2xl mx-auto my-8 text-center">
+      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 mb-6 text-emerald-600">
+        <i data-lucide="check-circle-2" class="h-10 w-10"></i>
+      </div>
+      <h3 class="text-2xl font-black text-slate-800">Registration Submitted!</h3>
+      <p class="text-slate-500 mt-2 text-sm" id="success-message"></p>
+      <div class="mt-8 bg-slate-50 border border-slate-150 rounded-xl p-6">
+        <span class="text-xs text-slate-450 font-bold uppercase block">Your Tracking Reference Number</span>
+        <span id="success-ref" class="font-mono text-3xl font-black text-emerald-700 block mt-1.5"></span>
+        <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+          Please write this reference code down. You can use it in the tracker above to verify your approval status and access your final card.
+        </p>
+      </div>
+      <button onclick="resetForm()" class="mt-8 bg-emerald-600 text-white font-bold text-xs px-6 py-3 rounded-xl hover:bg-emerald-700 transition-all uppercase tracking-wider">
+        Register Another Person
+      </button>
+    </div>
+
+    <!-- REGISTRATION FORM -->
+    <form id="registration-form" class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden my-8">
+      <div class="bg-gradient-to-r from-emerald-50 to-emerald-100/50 px-6 py-4 border-b border-emerald-100 text-center text-xs font-semibold text-emerald-800">
+        Please complete all sections. Required fields are marked with a red asterisk (*)
+      </div>
+
+      <div id="error-banner" class="hidden mx-6 mt-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 text-red-800">
+        <i data-lucide="alert-circle" class="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5"></i>
+        <div>
+          <p class="font-bold text-sm">Please Correct the Errors</p>
+          <p id="error-message-text" class="text-xs text-red-600 mt-0.5"></p>
+        </div>
+      </div>
+
+      <div class="p-6 md:p-8 space-y-10">
+
+        <!-- SECTION A: PERSONAL INFO -->
+        <section class="space-y-6">
+          <div class="flex items-center gap-3 border-b border-slate-150 pb-3">
+            <span class="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-sm">A</span>
+            <h3 class="font-black text-slate-800 text-lg uppercase tracking-tight">Personal Information</h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">1. Full Name <span class="text-red-500">*</span></label>
+              <input type="text" name="fullName" placeholder="First name, Middle name, Last name" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">2. Gender <span class="text-red-500">*</span></label>
+              <div class="flex gap-4">
+                <label class="flex-1 flex items-center justify-center border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-semibold cursor-pointer hover:bg-slate-50 transition-all text-slate-600 select-none">
+                  <input type="radio" name="gender" value="Male" class="mr-2" required> Male
+                </label>
+                <label class="flex-1 flex items-center justify-center border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-semibold cursor-pointer hover:bg-slate-50 transition-all text-slate-600 select-none">
+                  <input type="radio" name="gender" value="Female" class="mr-2" required> Female
+                </label>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="col-span-2">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">3. Date of Birth <span class="text-red-500">*</span></label>
+                <input type="date" name="dateOfBirth" id="dob-input" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-semibold" required>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 text-center">4. Age</label>
+                <input type="text" id="age-input" name="age" readonly class="w-full text-center bg-slate-50 rounded-lg border border-slate-200 py-2.5 text-sm font-black text-slate-700">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">5. Marital Status <span class="text-red-500">*</span></label>
+              <select name="maritalStatus" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-semibold bg-white" required>
+                <option value="">-- Choose Marital Status --</option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Separated">Separated</option>
+                <option value="Widowed">Widowed</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">6. Nationality <span class="text-red-500">*</span></label>
+              <input type="text" name="nationality" value="Liberian" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">7. County of Origin <span class="text-red-500">*</span></label>
+              <input type="text" name="countyOfOrigin" placeholder="e.g. Lofa, Nimba, Grand Bassa" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium" required>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">8. Home Address <span class="text-red-500">*</span></label>
+              <input type="text" name="homeAddress" placeholder="Quarter or Sector within Minnesota" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium" required>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">9. House Number / Landmark <span class="text-red-500">*</span></label>
+              <input type="text" name="houseNumberLandmark" placeholder="e.g. Behind Assembly of God Church" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">10. Mobile Number <span class="text-red-500">*</span></label>
+              <input type="tel" name="mobileNumber" placeholder="e.g. 0777123456" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">11. Alternative Number</label>
+              <input type="tel" name="alternativeNumber" placeholder="Optional back-up number" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium">
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">12. Email Address (if any)</label>
+              <input type="email" name="emailAddress" placeholder="example@gmail.com" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium">
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION B: LIVELIHOOD -->
+        <section class="space-y-6">
+          <div class="flex items-center gap-3 border-b border-slate-150 pb-3">
+            <span class="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-sm">B</span>
+            <h3 class="font-black text-slate-800 text-lg uppercase tracking-tight">Employment / Livelihood Information</h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">13. What do you do for a living? <span class="text-red-500">*</span></label>
+              <select name="livelihood" id="livelihood-select" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-bold bg-white" required>
+                <option value="">-- Choose Livelihood --</option>
+                <option value="Government Employee">Government Employee</option>
+                <option value="Private Employee">Private Employee</option>
+                <option value="Business Owner">Business Owner</option>
+                <option value="Petty Trader">Petty Trader</option>
+                <option value="Farmer">Farmer</option>
+                <option value="Fisherman/Fisherwoman">Fisherman/Fisherwoman</option>
+                <option value="Driver/Rider">Driver/Rider</option>
+                <option value="Teacher">Teacher</option>
+                <option value="Health Worker">Health Worker</option>
+                <option value="Student">Student</option>
+                <option value="Unemployed">Unemployed</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div id="livelihood-other-wrapper" class="hidden">
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Please specify livelihood <span class="text-red-500">*</span></label>
+              <input type="text" name="livelihoodOther" id="livelihood-other-input" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">14. Name of Employer/Business (if applicable)</label>
+              <input type="text" name="employerName" placeholder="Employer name or Self-employed" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Monthly Income Range (LD$) <span class="text-red-500">*</span></label>
+              <select name="monthlyIncome" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-bold bg-white" required>
+                <option value="">-- Choose Monthly Income --</option>
+                <option value="Less than LD$10,000">Less than LD$10,000</option>
+                <option value="LD$10,000 - LD$25,000">LD$10,000 - LD$25,000</option>
+                <option value="LD$25,001 - LD$50,000">LD$25,001 - LD$50,000</option>
+                <option value="Above LD$50,000">Above LD$50,000</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION C: HOUSEHOLD -->
+        <section class="space-y-6">
+          <div class="flex items-center gap-3 border-b border-slate-150 pb-3">
+            <span class="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-sm">C</span>
+            <h3 class="font-black text-slate-800 text-lg uppercase tracking-tight">Household Information</h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-5 rounded-xl border border-slate-100">
+            <div>
+              <span class="text-xs font-bold text-slate-500 uppercase block">15. Number of Dependents</span>
+              <span id="dependents-count" class="text-2xl font-black text-slate-800 block mt-1">0</span>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-500 uppercase block">17. Total Persons in Household</span>
+              <span id="household-total" class="text-2xl font-black text-slate-800 block mt-1">1</span>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+              <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider">16. Names, Ages, and Relationships of Dependents (if any)</label>
+              <button type="button" id="add-dependent-btn" class="bg-emerald-600 text-white font-bold text-xs px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-emerald-700 transition-colors">
+                <i data-lucide="plus" class="h-3.5 w-3.5"></i> Add Row
+              </button>
+            </div>
+            <div id="dependents-empty" class="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center text-slate-400">
+              <p class="text-sm font-semibold">No dependents declared yet.</p>
+              <p class="text-xs mt-0.5">Click "Add Row" above to register household dependents.</p>
+            </div>
+            <div id="dependents-table-container" class="hidden border border-slate-200 rounded-xl overflow-hidden shadow-inner">
+              <table class="w-full text-left">
+                <thead class="bg-slate-50 border-b border-slate-200">
+                  <tr class="text-xs font-bold text-slate-500 uppercase">
+                    <th class="py-3 px-4">Full Name</th>
+                    <th class="py-3 px-4 w-28">Age</th>
+                    <th className="py-3 px-4 w-48" style="padding: 12px 16px; width: 12rem;">Relationship</th>
+                    <th class="py-3 px-4 w-12"></th>
+                  </tr>
+                </thead>
+                <tbody id="dependents-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION D: COMMUNITY INFO -->
+        <section class="space-y-6">
+          <div class="flex items-center gap-3 border-b border-slate-150 pb-3">
+            <span class="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-sm">D</span>
+            <h3 class="font-black text-slate-800 text-lg uppercase tracking-tight">Community Information</h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">18. How Long Have You Lived in Minnesota? <span class="text-red-500">*</span></label>
+              <select name="durationOfResidency" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-bold bg-white" required>
+                <option value="">-- Choose Duration --</option>
+                <option value="Less than 1 Year">Less than 1 Year</option>
+                <option value="1-5 Years">1-5 Years</option>
+                <option value="6-10 Years">6-10 Years</option>
+                <option value="More than 10 Years">More than 10 Years</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">19. Residential Status <span class="text-red-500">*</span></label>
+              <select name="residentialStatus" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-bold bg-white" required>
+                <option value="">-- Choose Status --</option>
+                <option value="Property Owner">Property Owner</option>
+                <option value="Tenant">Tenant</option>
+                <option value="Relative/Dependent">Relative/Dependent</option>
+                <option value="Caretaker">Caretaker</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">20. Are You a Registered Voter? <span class="text-red-500">*</span></label>
+              <div class="flex gap-4">
+                <label class="flex-1 flex items-center justify-center border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-semibold cursor-pointer hover:bg-slate-50 text-slate-600 select-none">
+                  <input type="radio" name="isRegisteredVoter" value="Yes" class="mr-2" required> Yes
+                </label>
+                <label class="flex-1 flex items-center justify-center border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-semibold cursor-pointer hover:bg-slate-50 text-slate-600 select-none">
+                  <input type="radio" name="isRegisteredVoter" value="No" class="mr-2" required> No
+                </label>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">21. Willing to Participate in Community Activities? <span class="text-red-500">*</span></label>
+              <div class="flex gap-4">
+                <label class="flex-1 flex items-center justify-center border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-semibold cursor-pointer hover:bg-slate-50 text-slate-600 select-none">
+                  <input type="radio" name="willingToParticipate" value="Yes" class="mr-2" required> Yes
+                </label>
+                <label class="flex-1 flex items-center justify-center border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-semibold cursor-pointer hover:bg-slate-50 text-slate-600 select-none">
+                  <input type="radio" name="willingToParticipate" value="No" class="mr-2" required> No
+                </label>
+              </div>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">22. Areas of Interest in Community Development</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="areas-container"></div>
+              <div id="interest-other-wrapper" class="hidden mt-4">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Please specify interest area <span class="text-red-500">*</span></label>
+                <input type="text" name="areasOfInterestOther" id="interest-other-input" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION E: EMERGENCY CONTACT -->
+        <section class="space-y-6">
+          <div class="flex items-center gap-3 border-b border-slate-150 pb-3">
+            <span class="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-sm">E</span>
+            <h3 class="font-black text-slate-800 text-lg uppercase tracking-tight">Emergency Contact Information</h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Emergency Name <span class="text-red-500">*</span></label>
+              <input type="text" name="emergencyName" placeholder="Full name" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Relationship <span class="text-red-500">*</span></label>
+              <input type="text" name="emergencyRelationship" placeholder="e.g. Spouse, Brother, Sister" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Phone Number <span class="text-red-500">*</span></label>
+              <input type="tel" name="emergencyPhone" placeholder="Contact number" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Address <span class="text-red-500">*</span></label>
+              <input type="text" name="emergencyAddress" placeholder="Emergency contact address" class="w-full rounded-lg border border-slate-200 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-medium" required>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION F: DECLARATION -->
+        <section class="space-y-6">
+          <div class="flex items-center gap-3 border-b border-slate-150 pb-3">
+            <span class="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-sm">F</span>
+            <h3 class="font-black text-slate-800 text-lg uppercase tracking-tight">Member&apos;s Declaration</h3>
+          </div>
+          <div class="bg-slate-50 border border-slate-150 rounded-xl p-5 text-slate-700 space-y-4">
+            <p class="text-xs md:text-sm leading-relaxed font-semibold italic text-slate-600">
+              I hereby certify that the information provided above is true and correct to the best of my knowledge. I agree to abide by the Constitution, By-Laws, rules, and regulations of Minnesota Community and to support activities aimed at promoting peace, unity, development, and good governance.
+            </p>
+            <label class="flex items-start gap-3 cursor-pointer select-none border-t border-slate-200/60 pt-4 mt-2">
+              <input type="checkbox" name="isDeclared" class="h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-slate-300 mt-0.5" required>
+              <div>
+                <span class="text-xs font-black text-slate-850 uppercase tracking-wide">I Accept and Pledge My Commitment *</span>
+                <span class="block text-[11px] text-slate-400 mt-0.5">Checking this constitutes your digital signature and thumb print.</span>
+              </div>
+            </label>
+          </div>
+        </section>
+      </div>
+
+      <!-- FOOTER ACTIONS -->
+      <div class="bg-slate-50 border-t border-slate-100 px-6 py-5 flex items-center justify-end gap-3 flex-wrap">
+        <p class="text-xs text-slate-400 mr-auto font-medium">* Indicates a required field.</p>
+        <button type="submit" id="submit-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-8 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm w-full sm:w-auto">
+          <span>Submit Registration Form</span>
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 py-12 px-6 mt-16 text-center text-xs">
+    <div class="max-w-6xl mx-auto space-y-4">
+      <p class="font-bold text-slate-300 uppercase">MINNESOTA COMMUNITY &bull; BREWERVILLE CITY, MONTSERRADO COUNTY, LIBERIA</p>
+      <p class="max-w-md mx-auto text-slate-500 leading-relaxed">&ldquo;Unity, Peace, and Sustainable Development for All&rdquo;</p>
+      <div class="flex items-center justify-center gap-6 pt-4 border-t border-slate-800 max-w-sm mx-auto">
+        <a href="/admin.html" class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400 font-bold uppercase tracking-wider">
+          <i data-lucide="shield-check" class="h-4.5 w-4.5"></i> Admin Portal
+        </a>
+      </div>
+      <p class="text-[10px] text-slate-600 pt-4">&copy; <span id="current-year"></span> Minnesota Community. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+    document.getElementById("current-year").innerText = new Date().getFullYear();
+
+    // Load Logos
+    const logoTemplate = document.getElementById("logo-template");
+    document.getElementById("header-logo-left").appendChild(logoTemplate.content.cloneNode(true));
+    document.getElementById("header-logo-right").appendChild(logoTemplate.content.cloneNode(true));
+
+    // Calculate Age from Date of Birth
+    const dobInput = document.getElementById("dob-input");
+    const ageInput = document.getElementById("age-input");
+    dobInput.addEventListener("change", function() {
+      if (!this.value) return;
+      const birth = new Date(this.value);
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+      ageInput.value = age >= 0 ? age : 0;
+    });
+
+    // Livelihood Other Field Toggle
+    const livelihoodSelect = document.getElementById("livelihood-select");
+    const livelihoodOtherWrapper = document.getElementById("livelihood-other-wrapper");
+    const livelihoodOtherInput = document.getElementById("livelihood-other-input");
+    livelihoodSelect.addEventListener("change", function() {
+      if (this.value === "Other") {
+        livelihoodOtherWrapper.classList.remove("hidden");
+        livelihoodOtherInput.setAttribute("required", "required");
+      } else {
+        livelihoodOtherWrapper.classList.add("hidden");
+        livelihoodOtherInput.removeAttribute("required");
+        livelihoodOtherInput.value = "";
+      }
+    });
+
+    // Areas of Interest Checklist Builder
+    const areas = ["Security", "Health & Sanitation", "Education", "Youth Development", "Women's Affairs", "Sports & Recreation", "Infrastructure Development", "Environment", "Community Mediation", "Other"];
+    const areasContainer = document.getElementById("areas-container");
+    const interestOtherWrapper = document.getElementById("interest-other-wrapper");
+    const interestOtherInput = document.getElementById("interest-other-input");
+
+    areas.forEach(area => {
+      const label = document.createElement("label");
+      label.className = "flex items-center gap-3 border border-slate-150 rounded-lg p-3 text-xs font-bold cursor-pointer hover:bg-slate-50/50 select-none transition-colors text-slate-700";
+      
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = area;
+      input.className = "h-4 w-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 cursor-pointer";
+      
+      input.addEventListener("change", function() {
+        if (this.value === "Other") {
+          if (this.checked) {
+            interestOtherWrapper.classList.remove("hidden");
+            interestOtherInput.setAttribute("required", "required");
+          } else {
+            interestOtherWrapper.classList.add("hidden");
+            interestOtherInput.removeAttribute("required");
+            interestOtherInput.value = "";
+          }
+        }
+        if (this.checked) {
+          label.classList.add("border-emerald-500", "bg-emerald-50/40", "text-emerald-800");
+        } else {
+          label.classList.remove("border-emerald-500", "bg-emerald-50/40", "text-emerald-800");
+        }
+      });
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(" " + area));
+      areasContainer.appendChild(label);
+    });
+
+    // Dependents dynamic rows handler
+    const tbody = document.getElementById("dependents-tbody");
+    const dependentsEmpty = document.getElementById("dependents-empty");
+    const dependentsTableContainer = document.getElementById("dependents-table-container");
+    const addDependentBtn = document.getElementById("add-dependent-btn");
+    const dependentsCount = document.getElementById("dependents-count");
+    const householdTotal = document.getElementById("household-total");
+
+    let dependentsList = [];
+
+    function updateHouseholdCounters() {
+      const count = tbody.children.length;
+      dependentsCount.innerText = count;
+      householdTotal.innerText = count + 1;
+      if (count === 0) {
+        dependentsEmpty.classList.remove("hidden");
+        dependentsTableContainer.classList.add("hidden");
+      } else {
+        dependentsEmpty.classList.add("hidden");
+        dependentsTableContainer.classList.remove("hidden");
+      }
+    }
+
+    addDependentBtn.addEventListener("click", function() {
+      const tr = document.createElement("tr");
+      tr.className = "border-b border-slate-100 hover:bg-slate-50/50 transition-colors";
+      
+      tr.innerHTML = `
+        <td class="py-3 px-4">
+          <input type="text" placeholder="Full Name" required class="w-full rounded border border-slate-200 py-1.5 px-2.5 text-sm text-slate-850 font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-500">
+        </td>
+        <td class="py-3 px-4">
+          <input type="number" min="0" placeholder="Age" required class="w-full rounded border border-slate-200 py-1.5 px-2.5 text-sm font-black text-slate-700 text-center focus:outline-none focus:ring-1 focus:ring-emerald-500">
+        </td>
+        <td class="py-3 px-4">
+          <input type="text" placeholder="e.g. Son, Spouse" required class="w-full rounded border border-slate-200 py-1.5 px-2.5 text-sm text-slate-850 font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-500">
+        </td>
+        <td class="py-3 px-4 text-center">
+          <button type="button" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded transition-colors remove-dep-row">
+            <i class="h-4.5 w-4.5" data-lucide="trash-2"></i>
+          </button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+      lucide.createIcons({ attrs: { class: "h-4.5 w-4.5" } });
+      updateHouseholdCounters();
+
+      tr.querySelector(".remove-dep-row").addEventListener("click", function() {
+        tr.remove();
+        updateHouseholdCounters();
+      });
+    });
+
+    // Handle Form Submission
+    const form = document.getElementById("registration-form");
+    const errorBanner = document.getElementById("error-banner");
+    const errorMessageText = document.getElementById("error-message-text");
+    const successBox = document.getElementById("success-box");
+    const submitBtn = document.getElementById("submit-btn");
+
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
+      errorBanner.classList.add("hidden");
+      submitBtn.setAttribute("disabled", "disabled");
+      submitBtn.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>Submitting Registration...</span>
+      `;
+
+      // Structure Dependents List
+      const dependents = [];
+      const rows = tbody.querySelectorAll("tr");
+      rows.forEach(row => {
+        const inputs = row.querySelectorAll("input");
+        dependents.push({
+          name: inputs[0].value,
+          age: parseInt(inputs[1].value) || 0,
+          relationship: inputs[2].value
+        });
+      });
+
+      // Structure Areas of Interest list
+      const areasOfInterest = [];
+      areasContainer.querySelectorAll("input[type='checkbox']").forEach(box => {
+        if (box.checked) areasOfInterest.push(box.value);
+      });
+
+      // Assemble Form Data Object
+      const rawFormData = new FormData(form);
+      const payload = {
+        fullName: rawFormData.get("fullName"),
+        gender: rawFormData.get("gender"),
+        dateOfBirth: rawFormData.get("dateOfBirth"),
+        age: parseInt(rawFormData.get("age")) || 0,
+        maritalStatus: rawFormData.get("maritalStatus"),
+        nationality: rawFormData.get("nationality"),
+        countyOfOrigin: rawFormData.get("countyOfOrigin"),
+        homeAddress: rawFormData.get("homeAddress"),
+        houseNumberLandmark: rawFormData.get("houseNumberLandmark"),
+        mobileNumber: rawFormData.get("mobileNumber"),
+        alternativeNumber: rawFormData.get("alternativeNumber"),
+        emailAddress: rawFormData.get("emailAddress"),
+        livelihood: rawFormData.get("livelihood"),
+        livelihoodOther: rawFormData.get("livelihoodOther") || "",
+        employerName: rawFormData.get("employerName") || "",
+        monthlyIncome: rawFormData.get("monthlyIncome"),
+        numberOfDependents: dependents.length,
+        dependents: dependents,
+        totalPersonsInHousehold: dependents.length + 1,
+        durationOfResidency: rawFormData.get("durationOfResidency"),
+        residentialStatus: rawFormData.get("residentialStatus"),
+        isRegisteredVoter: rawFormData.get("isRegisteredVoter") === "Yes",
+        willingToParticipate: rawFormData.get("willingToParticipate") === "Yes",
+        areasOfInterest: areasOfInterest,
+        areasOfInterestOther: rawFormData.get("areasOfInterestOther") || "",
+        emergencyName: rawFormData.get("emergencyName"),
+        emergencyRelationship: rawFormData.get("emergencyRelationship"),
+        emergencyPhone: rawFormData.get("emergencyPhone"),
+        emergencyAddress: rawFormData.get("emergencyAddress"),
+        isDeclared: rawFormData.get("isDeclared") === "on"
+      };
+
+      try {
+        const response = await fetch("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (!response.ok) throw new Error(result.error || "Submission failed.");
+
+        // Show Success
+        document.getElementById("success-message").innerHTML = `Thank you, <span class="font-bold text-slate-700">${payload.fullName}</span>. Your application for Minnesota Community Membership has been registered.`;
+        document.getElementById("success-ref").innerText = result.trackingNo;
+        
+        form.classList.add("hidden");
+        successBox.classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        errorMessageText.innerText = err.message;
+        errorBanner.classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } finally {
+        submitBtn.removeAttribute("disabled");
+        submitBtn.innerHTML = `<span>Submit Registration Form</span>`;
+      }
+    });
+
+    function resetForm() {
+      form.reset();
+      tbody.innerHTML = "";
+      updateHouseholdCounters();
+      form.classList.remove("hidden");
+      successBox.classList.add("hidden");
+      livelihoodOtherWrapper.classList.add("hidden");
+      interestOtherWrapper.classList.add("hidden");
+      areasContainer.querySelectorAll("input[type='checkbox']").forEach(box => {
+        box.checked = false;
+        box.parentElement.classList.remove("border-emerald-500", "bg-emerald-50/40", "text-emerald-800");
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // Handle Tracker Lookup
+    const trackerForm = document.getElementById("status-checker-form");
+    const trackerQuery = document.getElementById("status-query");
+    const trackerSubmitBtn = document.getElementById("status-submit-btn");
+    const trackerResult = document.getElementById("status-result");
+
+    trackerForm.addEventListener("submit", async function(e) {
+      e.preventDefault();
+      trackerResult.classList.add("hidden");
+      trackerSubmitBtn.setAttribute("disabled", "disabled");
+      trackerSubmitBtn.innerHTML = `<i class="animate-spin h-4 w-4" data-lucide="loader-2"></i>`;
+      lucide.createIcons();
+
+      try {
+        const response = await fetch(`/api/check-status?query=${encodeURIComponent(trackerQuery.value.trim())}`);
+        const result = await response.json();
+
+        if (!response.ok) throw new Error(result.error || "Failed to locate registration.");
+
+        const data = result.data;
+        const formattedDate = new Date(data.dateOfRegistration).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+
+        let statusBanner = "";
+        if (data.status === "approved") {
+          statusBanner = `
+            <div class="flex items-center gap-3 bg-emerald-50 text-emerald-800 border border-emerald-100 rounded-xl p-3">
+              <i data-lucide="check-circle-2" class="h-6 w-6 text-emerald-600 flex-shrink-0"></i>
+              <div>
+                <p class="font-bold text-sm">Approved Member</p>
+                <p class="text-xs text-emerald-600 mt-0.5">Congratulations! Your membership in Minnesota Community is approved.</p>
+              </div>
+            </div>
+          `;
+        } else if (data.status === "rejected") {
+          statusBanner = `
+            <div class="flex items-center gap-3 bg-red-50 text-red-800 border border-red-100 rounded-xl p-3">
+              <i data-lucide="x-circle" class="h-6 w-6 text-red-600 flex-shrink-0"></i>
+              <div>
+                <p class="font-bold text-sm">Application Declined</p>
+                <p class="text-xs text-red-600 mt-0.5">Your application was not approved by the office at this time.</p>
+              </div>
+            </div>
+          `;
+        } else {
+          statusBanner = `
+            <div class="flex items-center gap-3 bg-amber-50 text-amber-800 border border-amber-100 rounded-xl p-3">
+              <i data-lucide="clock" class="h-6 w-6 text-amber-600 flex-shrink-0 animate-pulse"></i>
+              <div>
+                <p class="font-bold text-sm">Application Under Review</p>
+                <p class="text-xs text-amber-650 mt-0.5">Your application has been received and is awaiting Office evaluation.</p>
+              </div>
+            </div>
+          `;
+        }
+
+        trackerResult.innerHTML = `
+          <div class="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Applicant Name</span>
+                <span class="text-base font-bold text-slate-800">${data.fullName}</span>
+              </div>
+              <div>
+                <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Tracking / Card No</span>
+                <span class="font-mono text-xs font-bold text-slate-700 bg-slate-200/60 px-2.5 py-1 rounded block">${data.registrationNo}</span>
+              </div>
+            </div>
+            ${statusBanner}
+            ${data.officeRemarks ? `
+              <div class="text-xs bg-white border border-slate-200/60 rounded-lg p-2.5 text-slate-650">
+                <span class="font-bold text-slate-700 block mb-0.5">Office Remarks:</span>
+                &ldquo;${data.officeRemarks}&rdquo;
+              </div>
+            ` : ""}
+            <div class="text-[10px] text-slate-400 text-center">Submitted on ${formattedDate}</div>
+          </div>
+        `;
+        
+        trackerResult.classList.remove("hidden");
+        lucide.createIcons();
+      } catch (err) {
+        trackerResult.innerHTML = `
+          <div class="p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 text-red-700">
+            <i data-lucide="alert-triangle" class="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <p class="font-bold text-sm">No Record Found</p>
+              <p class="text-xs text-red-600 mt-0.5">${err.message}</p>
+            </div>
+          </div>
+        `;
+        trackerResult.classList.remove("hidden");
+        lucide.createIcons();
+      } finally {
+        trackerSubmitBtn.removeAttribute("disabled");
+        trackerSubmitBtn.innerHTML = `<span>Check Status</span>`;
+      }
+    });
+  </script>
+</body>
+</html>
