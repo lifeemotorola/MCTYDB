@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
   }
 
   if (req.method !== "GET") {
-    return res.status(450).json({ error: "Method not allowed" });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
@@ -21,43 +21,26 @@ module.exports = async (req, res) => {
     const { query } = req.query;
 
     if (!query) {
-      return res.status(400).json({
-        error: "Please provide a Tracking Reference or Mobile Number.",
-      });
+      return res.status(400).json({ error: "Please provide a tracking number or mobile number." });
     }
 
-    const cleanedQuery = query.trim();
-
+    // Search by Tracking Number or Mobile Number
     const member = await Member.findOne({
       $or: [
-        { registrationNo: cleanedQuery },
-        { mobileNumber: cleanedQuery },
-        { alternativeNumber: cleanedQuery },
-      ],
+        { registrationNo: query.trim() },
+        { mobileNumber: query.trim() }
+      ]
     });
 
     if (!member) {
-      return res.status(404).json({
-        error: "No registration found matching that Reference or Mobile Number.",
-      });
+      return res.status(404).json({ error: "No registration found with those details." });
     }
 
-    // Return safe data
-    return res.status(200).json({
-      success: true,
-      data: {
-        fullName: member.fullName,
-        registrationNo: member.registrationNo,
-        status: member.status,
-        dateOfRegistration: member.dateOfRegistration,
-        officeApprovedBy: member.officeApprovedBy,
-        officeRemarks: member.officeRemarks,
-      },
-    });
+    return res.status(200).json({ success: true, data: member });
   } catch (error) {
-    console.error("Status Check Error:", error);
-    return res.status(500).json({
-      error: "An error occurred while checking status.",
+    console.error("Status Check API Error:", error);
+    return res.status(500).json({ 
+      error: error.message || "Internal server error while checking status." 
     });
   }
 };
