@@ -8,6 +8,8 @@ module.exports = async (req, res) => {
   res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
+  console.log(`Received request to /api/register with method: ${req.method}`);
+
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -19,10 +21,15 @@ module.exports = async (req, res) => {
   try {
     await connectDB();
 
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return res.status(400).json({ error: "Request body is empty." });
+    }
+
     // Generate a unique Tracking/Registration Number
-    // Format: MC-2026-XXXX (starting from 1001)
+    // We use a combination of count and a random suffix to prevent collisions
     const count = await Member.countDocuments();
-    const trackingNo = `MC-2026-${(1001 + count).toString()}`;
+    const randomSuffix = Math.floor(10 + Math.random() * 90); // 2-digit random number
+    const trackingNo = `MC-2026-${(1001 + count).toString()}${randomSuffix}`;
 
     const memberData = {
       ...req.body,
@@ -39,7 +46,11 @@ module.exports = async (req, res) => {
       trackingNo: trackingNo,
     });
   } catch (error) {
-    console.error("Registration API Error:", error);
+    console.error("Registration API Error Details:", {
+      message: error.message,
+      stack: error.stack,
+      code: error.code
+    });
     
     // Handle Mongoose validation errors or duplicate keys
     if (error.code === 11000) {

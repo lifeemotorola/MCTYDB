@@ -18,6 +18,8 @@ async function connectDB() {
     const opts = {
       bufferCommands: false,
       maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000, // Fail fast if the DB is unreachable
+      socketTimeoutMS: 45000,
     };
 
     cachedConnection = await mongoose.connect(MONGODB_URI, opts);
